@@ -176,6 +176,17 @@ domain_name() {
   cat "$DOMAIN_FILE"
 }
 
+CF_DOMAIN_FILE="/usr/local/etc/xray/domain-cloudfront"
+cloudfront_name() {
+  cat "$CF_DOMAIN_FILE" 2>/dev/null
+}
+print_cf_host() {
+  local cf
+  cf="$(cloudfront_name)"
+  [[ -n "$cf" ]] && echo "Host CF  : $cf"
+  return 0
+}
+
 uuid_new() {
   cat /proc/sys/kernel/random/uuid
 }
@@ -231,6 +242,7 @@ add_vless() {
   echo "UUID : $uuid"
   echo "Exp  : $exp"
   echo "Host : $(domain_name)"
+  print_cf_host
 }
 
 add_vmess() {
@@ -249,6 +261,7 @@ add_vmess() {
   echo "UUID : $uuid"
   echo "Exp  : $exp"
   echo "Host : $(domain_name)"
+  print_cf_host
 }
 
 add_trojan() {
@@ -266,6 +279,7 @@ add_trojan() {
   echo "Password : $user"
   echo "Exp      : $exp"
   echo "Host     : $(domain_name)"
+  print_cf_host
 }
 
 check_user() {

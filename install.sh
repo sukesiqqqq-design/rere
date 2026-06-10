@@ -667,6 +667,10 @@ cd
 # Certificate
 iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 2081 2>/dev/null || true
 echo -e "${domain}" > /usr/local/etc/xray/domain
+# CloudFront domain (opsional). Dikosongkan saat install; admin set lewat
+# menu 09 (Domain & Certificate) -> opsi 3. Saat di-set, setiap akun SSH/Xray
+# baru akan menampilkan 2 domain: CloudFlare (utama) + CloudFront.
+[[ -f /usr/local/etc/xray/domain-cloudfront ]] || : > /usr/local/etc/xray/domain-cloudfront
     rm -rf /root/.acme.sh
     mkdir /root/.acme.sh
     curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
