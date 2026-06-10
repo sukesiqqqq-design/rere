@@ -25,7 +25,7 @@
 # Klien inject (SNI=bug-host) tetap jalan karena routing berdasarkan ALPN, bukan SNI.
 #
 # Cara pakai (di VPS, sebagai root):
-#   bash <(curl -sL https://raw.githubusercontent.com/sugengagung2020-maker/rere/main/file/fix-ssh-ssl.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/fix-ssh-ssl.sh)
 #
 # Script idempotent — aman dijalankan berkali-kali.
 # ========================================================
@@ -130,7 +130,7 @@ fi
 mkdir -p /etc/sslh /var/run/sslh
 
 cat > /etc/default/sslh <<'EOF'
-# Managed by sugengagung2020-maker/rere fix-ssh-ssl.sh
+# Managed by sukesiqqqq-design/rere fix-ssh-ssl.sh
 RUN=yes
 DAEMON=/usr/sbin/sslh
 DAEMON_OPTS="-F /etc/sslh/sslh.cfg"
@@ -173,7 +173,7 @@ rm -f /etc/sslh/sslh-internal.cfg
 cat > /etc/systemd/system/sslh-internal.service <<'EOF'
 [Unit]
 Description=SSLH internal post-TLS protocol dispatcher (HTTP/SSH)
-Documentation=https://github.com/sugengagung2020-maker/rere
+Documentation=https://github.com/sukesiqqqq-design/rere
 After=network-online.target
 Wants=network-online.target
 
@@ -213,7 +213,7 @@ if [ ! -f /etc/systemd/system/stunnel-ssh.service ]; then
     cat > /etc/systemd/system/stunnel-ssh.service <<'EOF'
 [Unit]
 Description=Stunnel TLS termination -> sslh-internal (HTTP/SSH dispatch)
-Documentation=https://github.com/sugengagung2020-maker/rere
+Documentation=https://github.com/sukesiqqqq-design/rere
 After=network-online.target ssh.service sshd.service sslh-internal.service
 Wants=network-online.target
 

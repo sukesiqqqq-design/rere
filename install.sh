@@ -53,7 +53,7 @@ unset __RERE_GATE_SALT __RERE_GATE_HASH
 # The previous upstream (mousethain/rere) still hosts the v2ray-era assets
 # without httpupgrade inbounds / locations, which silently breaks the
 # httpupgrade transport even though the install.sh logic has been migrated.
-hosting="https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file"
+hosting="https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file"
 
 if [ -f "/usr/local/etc/xray/domain" ]; then
 echo "Script Already Installed"
@@ -203,7 +203,7 @@ rm -f m.zip
 
 # Patch port info di add-ssh / add-ssh-gege supaya cocok dengan
 # arsitektur edge-mux (SSH Direct + SSH SSL/TLS multiport).
-RERE_HOSTING="https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file"
+RERE_HOSTING="https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file"
 wget -q -O /tmp/patch-menu-ports.sh "${RERE_HOSTING}/patch-menu-ports.sh" \
     && bash /tmp/patch-menu-ports.sh /usr/local/sbin \
     || echo "[install] WARNING: gagal apply patch-menu-ports.sh (skip)"
@@ -253,7 +253,7 @@ systemctl disable apache2
 #   Untuk h1, TLS diterminasi oleh stunnel -> sslh-internal -> HTTP atau SSH.
 mkdir -p /etc/sslh /var/run/sslh
 cat > /etc/default/sslh <<'EOF'
-# Managed by sugengagung2020-maker/rere installer.
+# Managed by sukesiqqqq-design/rere installer.
 # Mode: config file. Note: pakai /usr/sbin/sslh (fork). /usr/sbin/sslh-select
 # bermasalah di Ubuntu 20.04 package sslh 1.20-1 (flag -F kadang diabaikan
 # + perilaku select-loop yg tidak reliable utk pipeline edge-mux kita).
@@ -297,7 +297,7 @@ chmod 644 /etc/sslh/sslh.cfg
 cat > /etc/systemd/system/sslh-internal.service <<'EOF'
 [Unit]
 Description=SSLH internal post-TLS protocol dispatcher (HTTP/SSH)
-Documentation=https://github.com/sugengagung2020-maker/rere
+Documentation=https://github.com/sukesiqqqq-design/rere
 After=network-online.target
 Wants=network-online.target
 
@@ -667,6 +667,10 @@ cd
 # Certificate
 iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 2081 2>/dev/null || true
 echo -e "${domain}" > /usr/local/etc/xray/domain
+# CloudFront domain (opsional). Dikosongkan saat install; admin set lewat
+# menu 09 (Domain & Certificate) -> opsi 3. Saat di-set, setiap akun SSH/Xray
+# baru akan menampilkan 2 domain: CloudFlare (utama) + CloudFront.
+[[ -f /usr/local/etc/xray/domain-cloudfront ]] || : > /usr/local/etc/xray/domain-cloudfront
     rm -rf /root/.acme.sh
     mkdir /root/.acme.sh
     curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
@@ -703,7 +707,7 @@ chmod 644 /etc/stunnel/ssh-ssl.conf
 cat > /etc/systemd/system/stunnel-ssh.service <<'EOF'
 [Unit]
 Description=Stunnel TLS termination -> sslh-internal (HTTP/SSH dispatch)
-Documentation=https://github.com/sugengagung2020-maker/rere
+Documentation=https://github.com/sukesiqqqq-design/rere
 After=network-online.target ssh.service sshd.service sslh-internal.service
 Wants=network-online.target
 
@@ -786,7 +790,7 @@ rm -f /root/*
 # propagate exit code curl. Akibatnya install keliatan sukses padahal komponen
 # (mis. fail2ban) tidak kepasang. Pakai 2-step: download dulu ke file, cek
 # exit code curl, baru jalankan.
-RERE_HOSTING="https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file"
+RERE_HOSTING="https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file"
 __rere_run_remote() {
     local url="$1" tmp rc
     shift

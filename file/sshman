@@ -124,6 +124,10 @@ case "$CMD" in
     # /var/lock/quota-ssh.lock) supaya gak race sama cron quota-ssh.
     write_ssh_quota "$USER" "$QMODE" || { userdel "$USER" &>/dev/null || true; exit 1; }
     echo "Added SSH: $USER (limit: $IPLIMIT IP, mode: $QMODE)"
+    CF_DOMAIN="$(cat /usr/local/etc/xray/domain-cloudfront 2>/dev/null || true)"
+    if [[ -n "$CF_DOMAIN" ]]; then
+      echo "Domain CloudFront: $CF_DOMAIN (username & password sama)"
+    fi
     ;;
 
   check)
