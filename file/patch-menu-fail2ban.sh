@@ -39,7 +39,7 @@ if ! command -v fail2ban-client >/dev/null 2>&1; then
     clear
     echo -e "${RED}Fail2ban belum terpasang.${NC}"
     echo -e "Pasang dulu dengan:"
-    echo -e "  bash <(curl -sL https://raw.githubusercontent.com/sugengagung2020-maker/rere/main/file/setup-fail2ban.sh)"
+    echo -e "  bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/setup-fail2ban.sh)"
     echo ""
     read -p "Tekan Enter untuk kembali ke menu utama..." x
     menu

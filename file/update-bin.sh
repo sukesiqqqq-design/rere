@@ -15,16 +15,16 @@
 # nge-resolve ke copy lama.
 #
 # Cara pakai (1 baris dari fork main):
-#   bash <(curl -sL https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file/update-bin.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/update-bin.sh)
 #
 # Override host (mis. mau tarik dari branch lain atau fork lain):
-#   HOSTING="https://raw.githubusercontent.com/ayonger9-cpu/rere/<branch>/file" \
+#   HOSTING="https://raw.githubusercontent.com/sukesiqqqq-design/rere/<branch>/file" \
 #     bash <(curl -sL "${HOSTING}/update-bin.sh")
 # ========================================================
 
 set -e
 
-HOSTING="${HOSTING:-https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file}"
+HOSTING="${HOSTING:-https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file}"
 DESTS=(/usr/local/bin /usr/local/sbin)
 
 say() { echo "[update-bin] $*"; }

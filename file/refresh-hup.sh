@@ -8,7 +8,7 @@
 # install ulang dari nol (akun yang sudah ada tetap aman).
 #
 # Cara pakai:
-#   bash <(curl -sL https://raw.githubusercontent.com/SukiSuki40/rere/main/file/refresh-hup.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/refresh-hup.sh)
 #
 # Yang dilakukan script ini:
 #   1. Backup file penting (config.json, nginx.conf, main.zip lama)
@@ -23,7 +23,7 @@
 
 set -e
 
-HOSTING="https://raw.githubusercontent.com/SukiSuki40/rere/main/file"
+HOSTING="https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file"
 
 echo "[refresh-hup] Mendeteksi lokasi config xray..."
 XRAY_DIR="/usr/local/etc/xray"
@@ -88,7 +88,7 @@ rm -f "$TMP_ZIP"
 
 # Patch port info di add-ssh / add-ssh-gege ke arsitektur edge-mux
 # (sslh-public + stunnel + sslh-internal). Idempotent.
-RERE_HOSTING="https://raw.githubusercontent.com/sugengagung2020-maker/rere/main/file"
+RERE_HOSTING="https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file"
 TMP_PATCH=$(mktemp)
 if wget -q -O "$TMP_PATCH" "${RERE_HOSTING}/patch-menu-ports.sh"; then
     bash "$TMP_PATCH" /usr/local/sbin || true

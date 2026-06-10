@@ -23,6 +23,8 @@
 
 > [**Account Manager CLI**](#-account-manager-cli)
 
+> [**Dual Domain (CloudFront)**](#-dual-domain-cloudflare--cloudfront)
+
 > [**Port Information**](#Port-Information)
 
 > [**Uninstall**](#-uninstall)
@@ -40,7 +42,7 @@ This autoscript is a lifetime free autoscript with simple xray x noobzvpns multi
 
 ``🚀 Installation Guide``
 ```html
-apt update && apt install wget curl screen gnupg openssl perl binutils -y && wget -O install.sh "https://raw.githubusercontent.com/ayonger9-cpu/rere/main/install.sh" && chmod +x install.sh && screen -S fn ./install.sh; if [ $? -ne 0 ]; then rm -f install.sh; fi
+apt update && apt install wget curl screen gnupg openssl perl binutils -y && wget -O install.sh "https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/install.sh" && chmod +x install.sh && screen -S fn ./install.sh; if [ $? -ne 0 ]; then rm -f install.sh; fi
 ```
 
 > Cukup satu command di atas. Fresh install sudah otomatis termasuk:
@@ -55,6 +57,7 @@ apt update && apt install wget curl screen gnupg openssl perl binutils -y && wge
 > - Menu option **18. Cek SSH Quota** / **19. Set SSH Quota**
 > - Prompt `Limit IP (1/2)` di `add-ssh` / `add-ssh-gege`
 > - CLI wrapper `sshman` / `vmessman` / `vlessman` / `trojanman`
+> - **Dual domain CloudFront** (opsional) — set lewat menu **09 → opsi 3**, lalu tiap akun SSH/Xray tampil 2 domain (CloudFlare + CloudFront) dengan kredensial sama
 
 ``If it stops in the middle of the process``
 ```html
@@ -133,10 +136,10 @@ Kalau VPS udah jalan tapi belum punya fitur quota, jalanin satu-baris:
 
 ```bash
 # Xray quota
-bash <(curl -sL https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file/activate-quota.sh)
+bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/activate-quota.sh)
 
 # SSH quota
-bash <(curl -sL https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file/activate-quota-ssh.sh)
+bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/activate-quota-ssh.sh)
 ```
 
 Pertama kali jalan, masing-masing nanya default quota (sama persis kayak fresh install). Re-run berikutnya **skip prompt** kalau conf udah ada (pilihan admin di-preserve).
@@ -234,9 +237,51 @@ trojanman add ekoo 30 2           # trojan user ekoo, expired 30 hari, quota 250
 
 **Update wrapper CLI (kalau VPS udah ke-install dari versi lama, refresh aja):**
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file/update-bin.sh)
+bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/update-bin.sh)
 ```
 Idempotent — re-download `sshman` / `vmessman` / `vlessman` / `trojanman` dari fork ke `/usr/local/bin/`. Aman dipanggil berkali-kali.
+
+---
+
+## 🌩️ Dual Domain (CloudFlare + CloudFront)
+
+Setiap akun **SSH** atau **Xray** (vmess/vless/trojan) bisa tampil dengan **2 domain sekaligus**:
+- **Domain CloudFlare** (utama) — domain VPS seperti biasa.
+- **Domain CloudFront** (opsional) — sebagai jalur CDN kedua.
+
+**Username / UUID / password tetap sama** untuk kedua domain — cuma beda host. Berguna kalau salah satu CDN ke-block / lemot, user tinggal pindah ke domain satunya tanpa ganti akun.
+
+> Blok CloudFront **opsional**: kalau domainnya belum di-set, output akun sama persis seperti sebelumnya (tidak ada perubahan).
+
+### Set domain CloudFront
+
+Lewat menu **09. Domain & Certificate**:
+- **Opsi 3** — Set/ganti domain CloudFront (mis. `d123abc.cloudfront.net`).
+- **Opsi 4** — Hapus domain CloudFront (akun baru kembali hanya tampilkan CloudFlare).
+
+Tersimpan di `/usr/local/etc/xray/domain-cloudfront`. Tidak perlu issue cert baru — TLS diterminasi di edge CloudFront.
+
+### Prasyarat distribusi CloudFront
+
+1. **Origin** = domain CloudFlare VPS (mis. `edge.domainkamu.com`).
+2. **Aktifkan WebSocket** — origin request policy harus meneruskan header `Upgrade` & `Connection`.
+3. **Cache** di-disable untuk path WS/HUP (`/vmess`, `/vless`, `/trojan-ws`, `/vmess-hup`, dst) supaya koneksi tidak di-cache.
+4. Viewer protocol: HTTPS (port 443) — TLS di-terminasi CloudFront, jadi `sni`/`host` link = domain CloudFront.
+
+### Transport yang dikeluarkan untuk CloudFront
+
+| Protocol | Link CloudFront |
+|----------|-----------------|
+| **VMess** | WS TLS (443), WS NTLS (80), HTTPUpgrade TLS (443), HTTPUpgrade NTLS (80) |
+| **VLESS** | WS TLS (443), WS NTLS (80), HTTPUpgrade TLS (443), HTTPUpgrade NTLS (80) |
+| **Trojan** | WS TLS (443), HTTPUpgrade TLS (443) |
+| **SSH** | SSH-WS (payload `Host: <cloudfront>`) — port & kredensial sama |
+
+> **gRPC tidak dikeluarkan untuk CloudFront** karena origin CloudFront pakai HTTP/1.1 ke backend (gRPC butuh HTTP/2 end-to-end). Untuk gRPC, pakai domain CloudFlare.
+
+### REST API
+
+Response `add-vmess` / `add-vless` / `add-trojan` / `addssh` kini menyertakan field tambahan **`domain_cloudfront`** + **`links_cloudfront`** (SSH: `config_cloudfront` + `payload_cloudfront`). Field lama tidak berubah (backward-compatible). Field CloudFront berisi string kosong bila domain belum di-set.
 
 ---
 
@@ -284,7 +329,7 @@ Idempotent — re-download `sshman` / `vmessman` / `vlessman` / `trojanman` dari
 Hapus tuntas autoscript Rere dari VPS — stop+disable semua service, apt purge package proxy-spesifik, hapus config dir + binary + systemd unit + cron entry + iptables rules, dan (opsional) hapus akun VPN. **Destructive, idempotent.**
 
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/ayonger9-cpu/rere/main/file/uninstall.sh)
+bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/uninstall.sh)
 ```
 
 Script bakal nanya konfirmasi (ketik `UNINSTALL` huruf besar) sebelum eksekusi. Flag opsional:

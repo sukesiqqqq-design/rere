@@ -10,7 +10,7 @@
 #   - recidive  ban panjang utk attacker yg sudah pernah di-ban
 #
 # Jalankan di VPS lama (yang belum punya fail2ban):
-#   bash <(curl -sL https://raw.githubusercontent.com/sugengagung2020-maker/rere/main/file/setup-fail2ban.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/sukesiqqqq-design/rere/main/file/setup-fail2ban.sh)
 # ============================================================================
 
 set -e
@@ -38,7 +38,7 @@ mkdir -p /etc/fail2ban/jail.d
 
 # Tulis jail.local (override aman terhadap upgrade package).
 cat > /etc/fail2ban/jail.local <<'EOF'
-# Managed by sugengagung2020-maker/rere installer.
+# Managed by sukesiqqqq-design/rere installer.
 # Edit di sini, jangan di /etc/fail2ban/jail.conf (akan ditimpa upgrade package).
 
 [DEFAULT]
