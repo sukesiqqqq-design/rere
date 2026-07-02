@@ -122,10 +122,7 @@ if ! grep -qE 'quota-ssh($| )' /etc/crontab; then
   echo '* * * * * root /usr/local/bin/quota-ssh' >> /etc/crontab
   say "Cron tiap menit ditambahkan."
 fi
-if ! grep -q 'quota-ssh --monthly-reset' /etc/crontab; then
-  echo '2 0 1 * * root /usr/local/bin/quota-ssh --monthly-reset' >> /etc/crontab
-  say "Cron monthly-reset ditambahkan."
-fi
+# Cron monthly-reset dinonaktifkan (reset bulanan otomatis tanggal 1 dimatikan)
 systemctl restart cron >/dev/null 2>&1 || service cron restart >/dev/null 2>&1 || true
 
 say "Selesai. Cara pakai:"

@@ -124,11 +124,7 @@ if ! grep -q "quota-xray$" /etc/crontab; then
   echo '* * * * * root /usr/local/bin/quota-xray' >> /etc/crontab
   say "Cron tiap menit ditambahkan."
 fi
-# 2) tanggal 1 tiap bulan jam 00:01: reset bulanan
-if ! grep -q 'quota-xray --monthly-reset' /etc/crontab; then
-  echo '1 0 1 * * root /usr/local/bin/quota-xray --monthly-reset' >> /etc/crontab
-  say "Cron monthly-reset ditambahkan."
-fi
+# Cron monthly-reset dinonaktifkan (reset bulanan otomatis tanggal 1 dimatikan)
 systemctl restart cron >/dev/null 2>&1 || service cron restart >/dev/null 2>&1 || true
 
 say "Selesai. Cara pakai:"

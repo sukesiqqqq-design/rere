@@ -604,9 +604,7 @@ echo -e "
 0 0,1,3,5,6,9,11,12,13,15,17,18,21,23 * * * root backup
 */1 * * * * root /usr/local/bin/limit-ip
 * * * * * root /usr/local/bin/quota-xray
-1 0 1 * * root /usr/local/bin/quota-xray --monthly-reset
 * * * * * root /usr/local/bin/quota-ssh
-2 0 1 * * root /usr/local/bin/quota-ssh --monthly-reset
 " >> /etc/crontab
 systemctl daemon-reload
 systemctl restart cron
