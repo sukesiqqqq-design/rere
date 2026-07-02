@@ -48,7 +48,7 @@ apt update && apt install wget curl screen gnupg openssl perl binutils -y && wge
 > Cukup satu command di atas. Fresh install sudah otomatis termasuk:
 > - Inbound HTTPUpgrade (`/vless-hup`, `/vmess-hup`, `/trojan-hup`)
 > - IP-limit untuk SSH (cron `*/1 * * * *` jalan otomatis)
-> - **Bandwidth quota tracker untuk Xray + SSH** (cron `* * * * *`).
+> - **Bandwidth quota tracker untuk Xray + SSH** (cron `* * * * *`). **Reset bulanan otomatis dinonaktifkan** — admin reset manual via `quota-xray --reset` / `quota-ssh --reset`.
 >   Pas install ada 2 prompt:
 >   `Default quota Xray (GB) [250]:` lalu `Default quota SSH (GB) [250]:`.
 >   Saran: `50` untuk HP, `250` untuk STB OpenWRT, `0` untuk unlimited (track only).
@@ -104,9 +104,9 @@ Dua sistem terpisah, jalan paralel:
 | State DB              | `/usr/local/etc/xray/quota-xray.db`   | `/usr/local/etc/quota-ssh.db`                  |
 | Default per-akun      | `/usr/local/etc/quota-xray.conf`      | `/usr/local/etc/quota-ssh.conf`                |
 | Menu                  | **16. Cek Xray Quota** / **17. Set Xray Quota** | **18. Cek SSH Quota** / **19. Set SSH Quota** |
-| Cron                  | `* * * * * quota-xray` + `1 0 1 * * quota-xray --monthly-reset` | `* * * * * quota-ssh` + `2 0 1 * * quota-ssh --monthly-reset` |
+| Cron                  | `* * * * * quota-xray` *(reset bulanan otomatis **dinonaktifkan**)* | `* * * * * quota-ssh` *(reset bulanan otomatis **dinonaktifkan**)* |
 
-Setiap row di DB: `USER|LIMIT_MB|USED_BYTES|STATUS|RESET_DATE` (pipe-separated). `STATUS` ∈ `active | blocked | unlimited`. `LIMIT_MB=0` artinya unlimited (cuma di-track, no auto-block). `RESET_DATE` = tanggal reset bulanan berikutnya (= tanggal 1 bulan depan); reset bulanan otomatis nge-zero `USED_BYTES` + auto-unblock semua user yang blocked.
+Setiap row di DB: `USER|LIMIT_MB|USED_BYTES|STATUS|RESET_DATE` (pipe-separated). `STATUS` ∈ `active | blocked | unlimited`. `LIMIT_MB=0` artinya unlimited (cuma di-track, no auto-block). `RESET_DATE` = tanggal yang direkam di DB (tidak digunakan untuk auto-reset otomatis). **Reset bulanan otomatis tanggal 1 dinonaktifkan** — admin reset manual via `quota-xray --reset` / `quota-ssh --reset` kapanpun diinginkan.
 
 ### Default quota saat install
 
@@ -156,17 +156,17 @@ set-quota            # menu untuk Xray  (juga di main menu opsi 17)
 set-quota-ssh        # menu untuk SSH    (juga di main menu opsi 19)
 
 # Manage langsung tanpa menu
-quota-xray --reset            # reset usage SEMUA user xray + auto-unblock
+quota-xray --reset            # reset usage SEMUA user xray + auto-unblock (MANUAL)
 quota-xray --reset <user>     # reset 1 user
 quota-xray --block <user>     # block manual
 quota-xray --unblock <user>   # unblock manual
-quota-xray --monthly-reset    # alias --reset (dipanggil cron awal bulan)
+# quota-xray --monthly-reset  # (tidak dipakai — reset bulanan otomatis dinonaktifkan)
 
-quota-ssh  --reset            # idem untuk SSH
+quota-ssh  --reset            # idem untuk SSH (MANUAL)
 quota-ssh  --reset <user>
 quota-ssh  --block <user>
 quota-ssh  --unblock <user>
-quota-ssh  --monthly-reset
+# quota-ssh  --monthly-reset  # (tidak dipakai — reset bulanan otomatis dinonaktifkan)
 ```
 
 ### Ganti default global tanpa edit script
